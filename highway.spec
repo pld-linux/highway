@@ -14,6 +14,7 @@ Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}
 # Source0-md5:	4821b1064a35baa24ea36994c0d58c41
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
+BuildRequires:	gtest-devel
 BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.605
@@ -60,7 +61,8 @@ install -d build
 cd build
 %cmake .. \
 	-DCMAKE_INSTALL_INCLUDEDIR=include \
-	-DCMAKE_INSTALL_LIBDIR=%{_lib}
+	-DCMAKE_INSTALL_LIBDIR=%{_lib} \
+	-DHWY_SYSTEM_GTEST=ON
 
 %{__make}
 
