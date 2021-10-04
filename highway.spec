@@ -20,6 +20,9 @@ BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+# only static libraries included
+%define		_enable_debug_packages	0
+
 %description
 Highway is a C++ library for SIMD (Single Instruction, Multiple Data),
 i.e. applying the same operation to multiple 'lanes' using a single
