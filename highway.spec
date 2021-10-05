@@ -12,6 +12,8 @@ Group:		Libraries
 #Source0Download: https://github.com/google/highway/releases
 Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	4821b1064a35baa24ea36994c0d58c41
+# https://github.com/google/highway/commit/4a57d62e1d87d8c80bbea34fa0e2d27bc8f6b885.patch
+Patch0:		%{name}-rdtscp.patch
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
 BuildRequires:	gtest-devel
@@ -58,6 +60,7 @@ Dokumentacja API biblioteki Highway.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 install -d build

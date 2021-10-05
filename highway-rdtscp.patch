@@ -1,0 +1,44 @@
+From 4a57d62e1d87d8c80bbea34fa0e2d27bc8f6b885 Mon Sep 17 00:00:00 2001
+From: Jan Wassenberg <janwas@google.com>
+Date: Wed, 1 Sep 2021 02:49:11 -0700
+Subject: [PATCH] skip nanobenchmarks if rdtscp is not supported. Refs
+ https://github.com/libjxl/libjxl/issues/408, thanks @error256
+
+PiperOrigin-RevId: 394187316
+---
+ hwy/nanobenchmark.cc | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/hwy/nanobenchmark.cc b/hwy/nanobenchmark.cc
+index 8e00cca..91c5713 100644
+--- a/hwy/nanobenchmark.cc
++++ b/hwy/nanobenchmark.cc
+@@ -353,6 +353,12 @@ void Cpuid(const uint32_t level, const uint32_t count,
+ #endif
+ }
+ 
++bool HasRDTSCP() {
++  uint32_t abcd[4];
++  Cpuid(0x80000001U, 0, abcd);         // Extended feature flags
++  return (abcd[3] & (1u << 27)) != 0;  // RDTSCP
++}
++
+ std::string BrandString() {
+   char brand_string[49];
+   std::array<uint32_t, 4> abcd;
+@@ -647,6 +653,15 @@ int Unpredictable1() { return timer::Start() != ~0ULL; }
+ size_t Measure(const Func func, const uint8_t* arg, const FuncInput* inputs,
+                const size_t num_inputs, Result* results, const Params& p) {
+   NANOBENCHMARK_CHECK(num_inputs != 0);
++
++#if HWY_ARCH_X86
++  if (!platform::HasRDTSCP()) {
++    fprintf(stderr, "CPU '%s' does not support RDTSCP, skipping benchmark.\n",
++            platform::BrandString().c_str());
++    return 0;
++  }
++#endif
++
+   const InputVec& unique = UniqueInputs(inputs, num_inputs);
+ 
+   const size_t num_skip = NumSkip(func, arg, unique, p);  // never 0
