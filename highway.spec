@@ -6,7 +6,7 @@ Summary:	Efficient and performance-portable SIMD
 Summary(pl.UTF-8):	Wydajne i przenośne operacje SIMD
 Name:		highway
 Version:	0.14.2
-Release:	1
+Release:	2
 License:	Apache v2.0
 Group:		Libraries
 #Source0Download: https://github.com/google/highway/releases
