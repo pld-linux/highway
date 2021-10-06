@@ -42,3 +42,18 @@ index 8e00cca..91c5713 100644
    const InputVec& unique = UniqueInputs(inputs, num_inputs);
  
    const size_t num_skip = NumSkip(func, arg, unique, p);  // never 0
+--- highway-0.14.2/hwy/nanobenchmark.cc.orig	2021-10-06 06:25:11.981599545 +0200
++++ highway-0.14.2/hwy/nanobenchmark.cc	2021-10-06 21:31:31.524075329 +0200
+@@ -431,6 +431,12 @@ double Now() {
+ }
+ 
+ uint64_t TimerResolution() {
++#if HWY_ARCH_X86
++  /* TimerResolution() is used to initialize static variable, used in Measure() function */
++  if (!platform::HasRDTSCP())
++    return 0;
++#endif
++
+   // Nested loop avoids exceeding stack/L1 capacity.
+   timer::Ticks repetitions[Params::kTimerSamples];
+   for (size_t rep = 0; rep < Params::kTimerSamples; ++rep) {
