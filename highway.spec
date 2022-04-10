@@ -5,14 +5,14 @@
 Summary:	Efficient and performance-portable SIMD
 Summary(pl.UTF-8):	Wydajne i przenośne operacje SIMD
 Name:		highway
-Version:	0.14.2
-Release:	2
+Version:	0.16.0
+Release:	1
 License:	Apache v2.0
 Group:		Libraries
 #Source0Download: https://github.com/google/highway/releases
 Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	4821b1064a35baa24ea36994c0d58c41
-# https://github.com/google/highway/commit/4a57d62e1d87d8c80bbea34fa0e2d27bc8f6b885.patch
+# Source0-md5:	2d95ad96b3fda6cf7d918e801e89516e
+# related to https://github.com/google/highway/commit/4a57d62e1d87d8c80bbea34fa0e2d27bc8f6b885.patch
 Patch0:		%{name}-rdtscp.patch
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
@@ -21,9 +21,6 @@ BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.605
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-# only static libraries included
-%define		_enable_debug_packages	0
 
 %description
 Highway is a C++ library for SIMD (Single Instruction, Multiple Data),
@@ -36,15 +33,42 @@ Multiple Data), czyli wykonywania tej samej operacji na wielu "pasach"
 przy użyciu pojedynczej instrukcji procesora.
 
 %package devel
-Summary:	Development files for Highway library
-Summary(pl.UTF-8):	Pliki programistyczne biblioteki Highway
+Summary:	Header files for Highway library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki Highway
 Group:		Development/Libraries
+Requires:	%{name} = %{version}-%{release}
 
 %description devel
-Development files for Highway library.
+Header files for Highway library.
 
 %description devel -l pl.UTF-8
-Pliki programistyczne biblioteki Highway.
+Pliki nagłówkowe biblioteki Highway.
+
+%package test
+Summary:	Highway test helper library
+Summary(pl.UTF-8):	Biblioteka pomocnicza testów z użyciem biblioteki Highway
+Group:		Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description test
+Highway test helper library.
+
+%description test -l pl.UTF-8
+Biblioteka pomocnicza testów z użyciem biblioteki Highway.
+
+%package test-devel
+Summary:	Header files for Highway test library
+Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki Highway test
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}-%{release}
+Requires:	%{name}-test = %{version}-%{release}
+Requires:	gtest-devel
+
+%description test-devel
+Header files for Highway test library.
+
+%description test-devel -l pl.UTF-8
+Pliki nagłówkowe biblioteki Highway test.
 
 %package apidocs
 Summary:	API documentation for Highway library
@@ -81,14 +105,40 @@ rm -rf $RPM_BUILD_ROOT
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%files devel
+%post	-p /sbin/ldconfig
+%postun	-p /sbin/ldconfig
+
+%post	test -p /sbin/ldconfig
+%postun	test -p /sbin/ldconfig
+
+%files
 %defattr(644,root,root,755)
 %doc README.md
-%{_libdir}/libhwy.a
-%{_libdir}/libhwy_contrib.a
-%{_includedir}/hwy
+%attr(755,root,root) %{_libdir}/libhwy.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libhwy.so.0
+%attr(755,root,root) %{_libdir}/libhwy_contrib.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libhwy_contrib.so.0
+
+%files devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libhwy.so
+%attr(755,root,root) %{_libdir}/libhwy_contrib.so
+%dir %{_includedir}/hwy
+%{_includedir}/hwy/contrib
+%{_includedir}/hwy/ops
+%{_includedir}/hwy/*.h
 %{_pkgconfigdir}/libhwy.pc
 %{_pkgconfigdir}/libhwy-contrib.pc
+
+%files test
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libhwy_test.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/libhwy_test.so.0
+
+%files test-devel
+%defattr(644,root,root,755)
+%attr(755,root,root) %{_libdir}/libhwy_test.so
+%{_includedir}/hwy/tests
 %{_pkgconfigdir}/libhwy-test.pc
 
 %if %{with apidocs}

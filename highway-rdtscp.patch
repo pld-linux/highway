@@ -1,53 +1,9 @@
-From 4a57d62e1d87d8c80bbea34fa0e2d27bc8f6b885 Mon Sep 17 00:00:00 2001
-From: Jan Wassenberg <janwas@google.com>
-Date: Wed, 1 Sep 2021 02:49:11 -0700
-Subject: [PATCH] skip nanobenchmarks if rdtscp is not supported. Refs
- https://github.com/libjxl/libjxl/issues/408, thanks @error256
-
-PiperOrigin-RevId: 394187316
----
- hwy/nanobenchmark.cc | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/hwy/nanobenchmark.cc b/hwy/nanobenchmark.cc
-index 8e00cca..91c5713 100644
---- a/hwy/nanobenchmark.cc
-+++ b/hwy/nanobenchmark.cc
-@@ -353,6 +353,12 @@ void Cpuid(const uint32_t level, const uint32_t count,
- #endif
+--- highway-0.16.0/hwy/nanobenchmark.cc.orig	2022-04-09 18:30:28.550190500 +0200
++++ highway-0.16.0/hwy/nanobenchmark.cc	2022-04-09 18:31:11.596623964 +0200
+@@ -439,6 +439,12 @@ HWY_DLLEXPORT double Now() {
  }
  
-+bool HasRDTSCP() {
-+  uint32_t abcd[4];
-+  Cpuid(0x80000001U, 0, abcd);         // Extended feature flags
-+  return (abcd[3] & (1u << 27)) != 0;  // RDTSCP
-+}
-+
- std::string BrandString() {
-   char brand_string[49];
-   std::array<uint32_t, 4> abcd;
-@@ -647,6 +653,15 @@ int Unpredictable1() { return timer::Start() != ~0ULL; }
- size_t Measure(const Func func, const uint8_t* arg, const FuncInput* inputs,
-                const size_t num_inputs, Result* results, const Params& p) {
-   NANOBENCHMARK_CHECK(num_inputs != 0);
-+
-+#if HWY_ARCH_X86
-+  if (!platform::HasRDTSCP()) {
-+    fprintf(stderr, "CPU '%s' does not support RDTSCP, skipping benchmark.\n",
-+            platform::BrandString().c_str());
-+    return 0;
-+  }
-+#endif
-+
-   const InputVec& unique = UniqueInputs(inputs, num_inputs);
- 
-   const size_t num_skip = NumSkip(func, arg, unique, p);  // never 0
---- highway-0.14.2/hwy/nanobenchmark.cc.orig	2021-10-06 06:25:11.981599545 +0200
-+++ highway-0.14.2/hwy/nanobenchmark.cc	2021-10-06 21:31:31.524075329 +0200
-@@ -431,6 +431,12 @@ double Now() {
- }
- 
- uint64_t TimerResolution() {
+ HWY_DLLEXPORT uint64_t TimerResolution() {
 +#if HWY_ARCH_X86
 +  /* TimerResolution() is used to initialize static variable, used in Measure() function */
 +  if (!platform::HasRDTSCP())
