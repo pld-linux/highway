@@ -1,6 +1,7 @@
 #
 # Conditional build:
 %bcond_without	apidocs		# API documentation
+%bcond_without	tests		# don't build tests
 #
 Summary:	Efficient and performance-portable SIMD
 Summary(pl.UTF-8):	Wydajne i przenośne operacje SIMD
@@ -16,10 +17,10 @@ Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}
 Patch0:		%{name}-rdtscp.patch
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
-BuildRequires:	gtest-devel
+%{?with_tests:BuildRequires:	gtest-devel}
 BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 1.605
+BuildRequires:	rpmbuild(macros) >= 1.742
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -90,6 +91,7 @@ Dokumentacja API biblioteki Highway.
 install -d build
 cd build
 %cmake .. \
+	%{cmake_on_off tests BUILD_TESTING} \
 	-DCMAKE_INSTALL_INCLUDEDIR=include \
 	-DCMAKE_INSTALL_LIBDIR=%{_lib} \
 	-DHWY_SYSTEM_GTEST=ON
