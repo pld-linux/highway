@@ -6,15 +6,13 @@
 Summary:	Efficient and performance-portable SIMD
 Summary(pl.UTF-8):	Wydajne i przenośne operacje SIMD
 Name:		highway
-Version:	0.16.0
+Version:	1.0.3
 Release:	1
 License:	Apache v2.0
 Group:		Libraries
 #Source0Download: https://github.com/google/highway/releases
 Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	2d95ad96b3fda6cf7d918e801e89516e
-# related to https://github.com/google/highway/commit/4a57d62e1d87d8c80bbea34fa0e2d27bc8f6b885.patch
-Patch0:		%{name}-rdtscp.patch
+# Source0-md5:	d591cf12d8d1f9f237a015ffc691b7c2
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
 %{?with_tests:BuildRequires:	gtest-devel}
@@ -85,7 +83,6 @@ Dokumentacja API biblioteki Highway.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %build
 install -d build
@@ -117,9 +114,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc README.md
 %attr(755,root,root) %{_libdir}/libhwy.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libhwy.so.0
+%attr(755,root,root) %ghost %{_libdir}/libhwy.so.1
 %attr(755,root,root) %{_libdir}/libhwy_contrib.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libhwy_contrib.so.0
+%attr(755,root,root) %ghost %{_libdir}/libhwy_contrib.so.1
 
 %files devel
 %defattr(644,root,root,755)
@@ -135,7 +132,7 @@ rm -rf $RPM_BUILD_ROOT
 %files test
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libhwy_test.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libhwy_test.so.0
+%attr(755,root,root) %ghost %{_libdir}/libhwy_test.so.1
 
 %files test-devel
 %defattr(644,root,root,755)
