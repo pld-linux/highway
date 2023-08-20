@@ -6,13 +6,13 @@
 Summary:	Efficient and performance-portable SIMD
 Summary(pl.UTF-8):	Wydajne i przenośne operacje SIMD
 Name:		highway
-Version:	1.0.3
+Version:	1.0.6
 Release:	1
 License:	Apache v2.0
 Group:		Libraries
 #Source0Download: https://github.com/google/highway/releases
 Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	d591cf12d8d1f9f237a015ffc691b7c2
+# Source0-md5:	405abf8d94b618befd44b2cb60a90c0e
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
 %{?with_tests:BuildRequires:	gtest-devel}
@@ -128,6 +128,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_includedir}/hwy/*.h
 %{_pkgconfigdir}/libhwy.pc
 %{_pkgconfigdir}/libhwy-contrib.pc
+%{_libdir}/cmake/hwy
 
 %files test
 %defattr(644,root,root,755)
