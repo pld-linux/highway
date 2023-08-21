@@ -1,24 +1,28 @@
 #
 # Conditional build:
 %bcond_without	apidocs		# API documentation
+%bcond_with	sse2		# SSE2 instructions on x86/x32
 %bcond_without	tests		# don't build tests
 #
 Summary:	Efficient and performance-portable SIMD
 Summary(pl.UTF-8):	Wydajne i przenośne operacje SIMD
 Name:		highway
 Version:	1.0.6
-Release:	1
+Release:	2
 License:	Apache v2.0
 Group:		Libraries
 #Source0Download: https://github.com/google/highway/releases
 Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}.tar.gz
 # Source0-md5:	405abf8d94b618befd44b2cb60a90c0e
+Patch0:		%{name}-float16.patch
+Patch1:		%{name}-no-avx.patch
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
 %{?with_tests:BuildRequires:	gtest-devel}
 BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	rpm-build >= 4.6
 BuildRequires:	rpmbuild(macros) >= 1.742
+%{?with_sse2:Requires:	cpuinfo(sse2)}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -83,10 +87,15 @@ Dokumentacja API biblioteki Highway.
 
 %prep
 %setup -q
+%patch0 -p1
+%patch1 -p1
 
 %build
 install -d build
 cd build
+%if %{with sse2}
+CXXFLAGS="%{rpmcxxflags} -msse2"
+%endif
 %cmake .. \
 	%{cmake_on_off tests BUILD_TESTING} \
 	-DCMAKE_INSTALL_INCLUDEDIR=include \

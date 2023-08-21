@@ -1,0 +1,11 @@
+With gcc 13 AVX is used in static initialization in math_test.cc
+--- highway-1.0.6/CMakeLists.txt.orig	2023-08-11 15:54:08.000000000 +0200
++++ highway-1.0.6/CMakeLists.txt	2023-08-21 21:31:34.886441037 +0200
+@@ -564,7 +564,6 @@ list(APPEND HWY_TEST_FILES
+   hwy/contrib/image/image_test.cc
+   # Disabled due to SIGILL in clang7 debug build during gtest discovery phase,
+   # not reproducible locally. Still tested via bazel build.
+-  hwy/contrib/math/math_test.cc
+   hwy/contrib/sort/sort_test.cc
+   hwy/contrib/sort/bench_sort.cc
+   hwy/contrib/unroller/unroller_test.cc
