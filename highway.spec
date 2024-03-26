@@ -7,15 +7,14 @@
 Summary:	Efficient and performance-portable SIMD
 Summary(pl.UTF-8):	Wydajne i przenośne operacje SIMD
 Name:		highway
-Version:	1.0.6
-Release:	2
+Version:	1.1.0
+Release:	1
 License:	Apache v2.0
 Group:		Libraries
 #Source0Download: https://github.com/google/highway/releases
 Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	405abf8d94b618befd44b2cb60a90c0e
-Patch0:		%{name}-float16.patch
-Patch1:		%{name}-no-avx.patch
+# Source0-md5:	6a5d433b66626afbd3fcc5884d2f270a
+Patch0:		%{name}-no-avx.patch
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
 %{?with_tests:BuildRequires:	gtest-devel}
@@ -88,7 +87,6 @@ Dokumentacja API biblioteki Highway.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 install -d build
