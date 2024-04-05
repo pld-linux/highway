@@ -88,6 +88,11 @@ Dokumentacja API biblioteki Highway.
 %setup -q
 %patch0 -p1
 
+%ifarch x32
+# gcc 13.2 fails with allocation error
+%{__sed} -i -e '/hwy\/tests\/arithmetic_test.cc/d' CMakeLists.txt
+%endif
+
 %build
 install -d build
 cd build
