@@ -1,26 +1,25 @@
 #
 # Conditional build:
 %bcond_without	apidocs		# API documentation
-%bcond_with	sse2		# SSE2 instructions on x86/x32
-%bcond_without	tests		# don't build tests
+%bcond_with	sse2		# SSE2 instructions on x86-32
+%bcond_without	tests		# tests building
 #
 Summary:	Efficient and performance-portable SIMD
 Summary(pl.UTF-8):	Wydajne i przenośne operacje SIMD
 Name:		highway
-Version:	1.1.0
+Version:	1.2.0
 Release:	1
 License:	Apache v2.0
 Group:		Libraries
 #Source0Download: https://github.com/google/highway/releases
 Source0:	https://github.com/google/highway/archive/%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	6a5d433b66626afbd3fcc5884d2f270a
-Patch0:		%{name}-no-avx.patch
+# Source0-md5:	8b3d090a2d081730b40bca5ae0d65f11
 URL:		https://github.com/google/highway
 BuildRequires:	cmake >= 3.10
 %{?with_tests:BuildRequires:	gtest-devel}
 BuildRequires:	libstdc++-devel >= 6:4.7
 BuildRequires:	rpm-build >= 4.6
-BuildRequires:	rpmbuild(macros) >= 1.742
+BuildRequires:	rpmbuild(macros) >= 2.047
 %{?with_sse2:Requires:	cpuinfo(sse2)}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -86,7 +85,6 @@ Dokumentacja API biblioteki Highway.
 
 %prep
 %setup -q
-%patch0 -p1
 
 %ifarch x32
 # gcc 13.2 fails with allocation error
@@ -96,13 +94,11 @@ Dokumentacja API biblioteki Highway.
 %build
 install -d build
 cd build
-%if %{with sse2}
-CXXFLAGS="%{rpmcxxflags} -msse2"
-%endif
 %cmake .. \
-	%{cmake_on_off tests BUILD_TESTING} \
+	-DBUILD_TESTING=%{__ON_OFF tests} \
 	-DCMAKE_INSTALL_INCLUDEDIR=include \
 	-DCMAKE_INSTALL_LIBDIR=%{_lib} \
+	%{?with_sse2:-DHWY_CMAKE_SSE2=ON} \
 	-DHWY_SYSTEM_GTEST=ON
 
 %{__make}
