@@ -37,7 +37,7 @@ przy użyciu pojedynczej instrukcji procesora.
 Summary:	Header files for Highway library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki Highway
 Group:		Development/Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description devel
 Header files for Highway library.
@@ -49,7 +49,7 @@ Pliki nagłówkowe biblioteki Highway.
 Summary:	Highway test helper library
 Summary(pl.UTF-8):	Biblioteka pomocnicza testów z użyciem biblioteki Highway
 Group:		Libraries
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{name}%{?_isa} = %{version}-%{release}
 
 %description test
 Highway test helper library.
@@ -61,9 +61,9 @@ Biblioteka pomocnicza testów z użyciem biblioteki Highway.
 Summary:	Header files for Highway test library
 Summary(pl.UTF-8):	Pliki nagłówkowe biblioteki Highway test
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
-Requires:	%{name}-test = %{version}-%{release}
-Requires:	gtest-devel
+Requires:	%{name}-devel%{?_isa} = %{version}-%{release}
+Requires:	%{name}-test%{?_isa} = %{version}-%{release}
+Requires:	gtest-devel%{?_isa}
 
 %description test-devel
 Header files for Highway test library.
